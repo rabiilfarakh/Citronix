@@ -3,8 +3,10 @@ package com.example.citronix.ferme;
 import com.example.citronix.ferme.dto.FermeRequestDTO;
 import com.example.citronix.ferme.dto.FermeResponseDTO;
 import com.example.citronix.ferme.service.FermeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,14 +17,17 @@ import java.util.UUID;
 @RequestMapping("/api/ferme")
 public class FermeController {
 
+    private final FermeService fermeService;
+
     public FermeController(FermeService fermeService) {
         this.fermeService = fermeService;
     }
 
-    private final FermeService fermeService;
-
     @PostMapping
-    public ResponseEntity<FermeResponseDTO> createFerme(@RequestBody FermeRequestDTO fermeRequestDTO){
+    public ResponseEntity<Object> createFerme(@Valid @RequestBody FermeRequestDTO fermeRequestDTO, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getAllErrors(), HttpStatus.BAD_REQUEST);
+        }
         FermeResponseDTO fermeResponseDTO = fermeService.save(fermeRequestDTO);
         return new ResponseEntity<>(fermeResponseDTO, HttpStatus.CREATED);
     }

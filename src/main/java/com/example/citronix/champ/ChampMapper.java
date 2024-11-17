@@ -1,4 +1,11 @@
 package com.example.citronix.champ;
 
+import com.example.citronix.champ.dto.ChampRequestDTO;
+import com.example.citronix.champ.dto.ChampResponseDTO;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
 public interface ChampMapper {
+    ChampResponseDTO toResponseDTO(Champ champ);
+    Champ toEntity(ChampRequestDTO champRequestDTO);
 }
