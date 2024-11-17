@@ -1,4 +1,6 @@
 package com.example.citronix.ferme.dto;
 
-public class FermeRequestDTO {
+import java.util.Date;
+
+public record FermeRequestDTO(String nom, String localisation, Double superficie, Date dateCreation) {
 }

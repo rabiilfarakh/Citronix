@@ -1,4 +1,7 @@
 package com.example.citronix.ferme.dto;
 
-public class FermeResponseDTO {
+import java.util.Date;
+import java.util.UUID;
+
+public record FermeResponseDTO(UUID id, String nom, String localisation, Double superficie, Date dateCreation) {
 }
