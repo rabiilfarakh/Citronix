@@ -1,4 +1,10 @@
 package com.example.citronix.champ.dto;
 
-public class ChampResponseDTO {
-}
+import java.util.UUID;
+
+public record ChampResponseDTO(
+        UUID id,
+        String nom,
+        Double superficie
+) {}
+

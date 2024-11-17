@@ -33,13 +33,19 @@ public class FermeServiceImpl implements FermeService{
 
     @Override
     public Optional<FermeResponseDTO> findById(UUID id) {
-        return Optional.empty();
+        Optional<Ferme> fermeOptional = fermeRepository.findById(id);
+        if (fermeOptional.isPresent()) {
+            FermeResponseDTO fermeResponseDTO = fermeMapper.toResponseDTO(fermeOptional.get());
+            return Optional.of(fermeResponseDTO);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
     public List<FermeResponseDTO> findAll() {
         return fermeRepository.findAll().stream()
-                .map(ferme -> fermeMapper.toResponseDTO(ferme))
+                .map(fermeMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
