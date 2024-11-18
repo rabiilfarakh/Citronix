@@ -68,7 +68,6 @@ class ChampServiceImplTest {
 
     @Test
     void testUpdateChamp() {
-        // Arrange
         when(champRepository.findById(champId)).thenReturn(Optional.of(champ));
         when(champMapper.toResponseDTO(champ)).thenReturn(champResponseDTO);
 

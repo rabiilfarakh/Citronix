@@ -4,10 +4,10 @@ import com.example.citronix.champ.Champ;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
 
 @Entity
 public class Ferme {
