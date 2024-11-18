@@ -1,9 +1,11 @@
 package com.example.citronix.champ;
 
+import com.example.citronix.arbre.Arbre;
 import com.example.citronix.ferme.Ferme;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -19,8 +21,12 @@ public class Champ {
     private Double superficie;
 
     @ManyToOne
-    @NotNull(message = "La ferme ne peut pas être null")
     private Ferme ferme;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "arbre_id")
+    private List<Arbre> arbres;
+
 
     public UUID getId() {
         return id;
@@ -44,5 +50,21 @@ public class Champ {
 
     public void setSuperficie(@NotNull(message = "la superficie ne peut pas etre null") Double superficie) {
         this.superficie = superficie;
+    }
+
+    public Ferme getFerme() {
+        return ferme;
+    }
+
+    public void setFerme(Ferme ferme) {
+        this.ferme = ferme;
+    }
+
+    public List<Arbre> getArbres() {
+        return arbres;
+    }
+
+    public void setArbres(List<Arbre> arbres) {
+        this.arbres = arbres;
     }
 }

@@ -9,7 +9,13 @@ import java.util.UUID;
 
 public interface FermeService {
     FermeResponseDTO save(FermeRequestDTO fermeRequestDTO);
+
+    FermeResponseDTO update(UUID id, FermeRequestDTO fermeRequestDTO);
+
     Optional<FermeResponseDTO> findById(UUID id);
+
     List<FermeResponseDTO> findAll();
+
     void delete(UUID id);
 }
+

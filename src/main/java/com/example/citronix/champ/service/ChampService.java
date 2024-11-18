@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface ChampService {
     ChampResponseDTO save(ChampRequestDTO fermeRequestDTO);
+    ChampResponseDTO update(UUID id, ChampRequestDTO champRequestDTO);
     Optional<ChampResponseDTO> findById(UUID id);
     List<ChampResponseDTO> findAll();
     void delete(UUID id);
