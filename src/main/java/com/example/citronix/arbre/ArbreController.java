@@ -1,4 +1,4 @@
-package com.example.citronix.arbre.controller;
+package com.example.citronix.arbre;
 
 import com.example.citronix.arbre.dto.ArbreRequestDTO;
 import com.example.citronix.arbre.dto.ArbreResponseDTO;
