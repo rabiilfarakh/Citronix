@@ -1,6 +1,5 @@
 package com.example.citronix.ferme.dto;
 
-import com.example.citronix.champ.dto.ChampRequestDTO;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;

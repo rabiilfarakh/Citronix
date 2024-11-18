@@ -57,6 +57,10 @@ public class ArbreServiceImpl implements ArbreService {
 
     @Override
     public void delete(UUID id) {
+        if (!arbreRepository.existsById(id)) {
+            throw new IllegalArgumentException("Arbre avec l'ID " + id + " introuvable");
+        }
         arbreRepository.deleteById(id);
     }
+
 }
