@@ -27,8 +27,10 @@ public class Ferme {
     @NotNull(message = "La date ne peut pas être null")
     private Date dateCreation;
 
-    @OneToMany(mappedBy = "ferme")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "ferme_id")
     private List<Champ> champs;
+
 
     public UUID getId() {
         return id;
@@ -68,5 +70,13 @@ public class Ferme {
 
     public void setDateCreation(@NotNull(message = "La date ne peut pas être null") Date dateCreation) {
         this.dateCreation = dateCreation;
+    }
+
+    public List<Champ> getChamps() {
+        return champs;
+    }
+
+    public void setChamps(List<Champ> champs) {
+        this.champs = champs;
     }
 }

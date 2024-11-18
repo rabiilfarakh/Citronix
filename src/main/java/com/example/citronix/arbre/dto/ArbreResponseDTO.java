@@ -1,4 +1,7 @@
 package com.example.citronix.arbre.dto;
 
-public class ArbreResponseDTO {
+import java.util.Date;
+import java.util.UUID;
+
+public record ArbreResponseDTO(UUID id, Date datePlantation) {
 }
