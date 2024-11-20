@@ -4,10 +4,16 @@ import com.example.citronix.arbre.Arbre;
 import com.example.citronix.ferme.Ferme;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter @Setter
 @Entity
 public class Champ {
 
@@ -21,50 +27,10 @@ public class Champ {
     private Double superficie;
 
     @ManyToOne
+    @JoinColumn(name = "ferme_id", nullable = false)
     private Ferme ferme;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "arbre_id")
-    private List<Arbre> arbres;
+    @OneToMany(mappedBy = "champ", cascade = CascadeType.ALL)
+    private List<Arbre> arbres = new ArrayList<>();
 
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public @NotNull(message = "Le nom ne peut pas être null") String getNom() {
-        return nom;
-    }
-
-    public void setNom(@NotNull(message = "Le nom ne peut pas être null") String nom) {
-        this.nom = nom;
-    }
-
-    public @NotNull(message = "la superficie ne peut pas etre null") Double getSuperficie() {
-        return superficie;
-    }
-
-    public void setSuperficie(@NotNull(message = "la superficie ne peut pas etre null") Double superficie) {
-        this.superficie = superficie;
-    }
-
-    public Ferme getFerme() {
-        return ferme;
-    }
-
-    public void setFerme(Ferme ferme) {
-        this.ferme = ferme;
-    }
-
-    public List<Arbre> getArbres() {
-        return arbres;
-    }
-
-    public void setArbres(List<Arbre> arbres) {
-        this.arbres = arbres;
-    }
 }

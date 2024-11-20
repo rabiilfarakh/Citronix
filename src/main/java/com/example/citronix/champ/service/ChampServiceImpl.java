@@ -1,12 +1,13 @@
 package com.example.citronix.champ.service;
 
-import com.example.citronix.arbre.Arbre;
-import com.example.citronix.arbre.ArbreRepository;
 import com.example.citronix.champ.Champ;
 import com.example.citronix.champ.ChampMapper;
 import com.example.citronix.champ.ChampRepository;
-import com.example.citronix.champ.dto.ChampRequestDTO;
-import com.example.citronix.champ.dto.ChampResponseDTO;
+import com.example.citronix.champ.dto.request.ChampRequestDTO;
+import com.example.citronix.champ.dto.response.ChampResponseDTO;
+import com.example.citronix.ferme.Ferme;
+import com.example.citronix.ferme.service.FermeService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,28 +17,19 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ChampServiceImpl implements ChampService {
 
     private final ChampMapper champMapper;
     private final ChampRepository champRepository;
-    private final ArbreRepository arbreRepository;
+    private final FermeService fermeService;
 
-    public ChampServiceImpl(ChampMapper champMapper, ChampRepository champRepository, ArbreRepository arbreRepository) {
-        this.champMapper = champMapper;
-        this.champRepository = champRepository;
-        this.arbreRepository = arbreRepository;
-    }
 
-    @Transactional
     @Override
     public ChampResponseDTO save(ChampRequestDTO champRequestDTO) {
         Champ champ = champMapper.toEntity(champRequestDTO);
-
-        if (champRequestDTO.arbreIds() != null && !champRequestDTO.arbreIds().isEmpty()) {
-            List<Arbre> arbres = arbreRepository.findAllById(champRequestDTO.arbreIds());
-            champ.setArbres(arbres);
-        }
-
+        Ferme ferme = fermeService.findFermeById(champRequestDTO.ferme_id());
+        champ.setFerme(ferme);
         champ = champRepository.save(champ);
         return champMapper.toResponseDTO(champ);
     }
@@ -50,15 +42,6 @@ public class ChampServiceImpl implements ChampService {
 
         existingChamp.setNom(champRequestDTO.nom());
         existingChamp.setSuperficie(champRequestDTO.superficie());
-
-        if (champRequestDTO.arbreIds() != null) {
-            List<Arbre> arbres = champRequestDTO.arbreIds().stream()
-                    .map(arbreId -> arbreRepository.findById(arbreId)
-                            .orElseThrow(() -> new IllegalArgumentException("Arbre avec l'ID " + arbreId + " introuvable")))
-                    .toList();
-
-            existingChamp.setArbres(arbres);
-        }
 
         Champ updatedChamp = champRepository.save(existingChamp);
         return champMapper.toResponseDTO(updatedChamp);
@@ -80,5 +63,15 @@ public class ChampServiceImpl implements ChampService {
     @Override
     public void delete(UUID id) {
         champRepository.deleteById(id);
+    }
+
+        @Override
+        public Double sommeSuperficies(List<ChampRequestDTO> champs) {
+            return champs.stream().mapToDouble(ChampRequestDTO::superficie).sum();
+        }
+
+    @Override
+    public Champ findChampById(UUID id) {
+        return champRepository.findById(id).orElseThrow(()-> new RuntimeException("champ with id : " + id + "not found"));
     }
 }

@@ -1,7 +1,8 @@
 package com.example.citronix.ferme.service;
 
-import com.example.citronix.ferme.dto.FermeRequestDTO;
-import com.example.citronix.ferme.dto.FermeResponseDTO;
+import com.example.citronix.ferme.Ferme;
+import com.example.citronix.ferme.dto.request.FermeRequestDTO;
+import com.example.citronix.ferme.dto.response.FermeResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,10 @@ public interface FermeService {
     List<FermeResponseDTO> findAll();
 
     void delete(UUID id);
+
+    List<FermeResponseDTO> search(FermeRequestDTO criteria);
+
+    Ferme findFermeById(UUID id);
+
 }
 

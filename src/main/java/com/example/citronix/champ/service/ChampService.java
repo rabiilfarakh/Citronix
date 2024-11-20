@@ -1,7 +1,8 @@
 package com.example.citronix.champ.service;
 
-import com.example.citronix.champ.dto.ChampRequestDTO;
-import com.example.citronix.champ.dto.ChampResponseDTO;
+import com.example.citronix.champ.Champ;
+import com.example.citronix.champ.dto.request.ChampRequestDTO;
+import com.example.citronix.champ.dto.response.ChampResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,4 +14,6 @@ public interface ChampService {
     Optional<ChampResponseDTO> findById(UUID id);
     List<ChampResponseDTO> findAll();
     void delete(UUID id);
+    Double sommeSuperficies(List<ChampRequestDTO> champs);
+    Champ findChampById(UUID id);
 }

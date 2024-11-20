@@ -3,28 +3,30 @@ package com.example.citronix.arbre.service;
 import com.example.citronix.arbre.Arbre;
 import com.example.citronix.arbre.ArbreMapper;
 import com.example.citronix.arbre.ArbreRepository;
-import com.example.citronix.arbre.dto.ArbreRequestDTO;
-import com.example.citronix.arbre.dto.ArbreResponseDTO;
+import com.example.citronix.arbre.dto.request.ArbreRequestDTO;
+import com.example.citronix.arbre.dto.response.ArbreResponseDTO;
+import com.example.citronix.champ.Champ;
+import com.example.citronix.champ.service.ChampService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@AllArgsConstructor
 @Service
 public class ArbreServiceImpl implements ArbreService {
 
     private final ArbreRepository arbreRepository;
     private final ArbreMapper arbreMapper;
-
-    public ArbreServiceImpl(ArbreRepository arbreRepository, ArbreMapper arbreMapper) {
-        this.arbreRepository = arbreRepository;
-        this.arbreMapper = arbreMapper;
-    }
+    private final ChampService champService;
 
     @Override
     public ArbreResponseDTO save(ArbreRequestDTO arbreRequestDTO) {
         Arbre arbre = arbreMapper.toEntity(arbreRequestDTO);
+        Champ champ = champService.findChampById(arbreRequestDTO.champ_id());
+        arbre.setChamp(champ);
         arbre = arbreRepository.save(arbre);
         return arbreMapper.toResponseDTO(arbre);
     }

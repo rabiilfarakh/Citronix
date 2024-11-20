@@ -1,8 +1,9 @@
-package com.example.citronix.ferme.dto;
+package com.example.citronix.ferme.dto.response;
 
 import java.util.Date;
 import java.util.UUID;
-import com.example.citronix.champ.dto.ChampResponseDTO;
+
+import com.example.citronix.champ.dto.response.ChampDTO;
 import java.util.List;
 
 public record FermeResponseDTO(
@@ -11,7 +12,7 @@ public record FermeResponseDTO(
         String localisation,
         Double superficie,
         Date dateCreation,
-        List<ChampResponseDTO> champs
-) {
-}
+        List<ChampDTO> champs
+) {}
+
 

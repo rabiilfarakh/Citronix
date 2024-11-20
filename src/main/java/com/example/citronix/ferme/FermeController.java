@@ -1,7 +1,7 @@
 package com.example.citronix.ferme;
 
-import com.example.citronix.ferme.dto.FermeRequestDTO;
-import com.example.citronix.ferme.dto.FermeResponseDTO;
+import com.example.citronix.ferme.dto.request.FermeRequestDTO;
+import com.example.citronix.ferme.dto.response.FermeResponseDTO;
 import com.example.citronix.ferme.service.FermeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -60,5 +60,11 @@ public class FermeController {
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<FermeResponseDTO>> searchFermes(@RequestBody FermeRequestDTO criteria) {
+        List<FermeResponseDTO> result = fermeService.search(criteria);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

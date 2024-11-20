@@ -1,7 +1,7 @@
 package com.example.citronix.champ;
 
-import com.example.citronix.champ.dto.ChampRequestDTO;
-import com.example.citronix.champ.dto.ChampResponseDTO;
+import com.example.citronix.champ.dto.request.ChampRequestDTO;
+import com.example.citronix.champ.dto.response.ChampResponseDTO;
 import com.example.citronix.champ.service.ChampService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-
 
 @RestController
 @RequestMapping("/api/champs")
@@ -61,5 +60,12 @@ public class ChampController {
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/sommeSuperficies")
+    public ResponseEntity<Double> getSommeSuperficies(@Valid @RequestBody List<ChampRequestDTO> champRequestDTO) {
+        List<ChampResponseDTO> champs = champService.findAll();
+        Double sommeSuperficies = champService.sommeSuperficies(champRequestDTO);
+        return new ResponseEntity<>(sommeSuperficies, HttpStatus.OK);
     }
 }
