@@ -6,11 +6,13 @@ import com.example.citronix.ferme.FermeMapper;
 import com.example.citronix.ferme.FermeRepository;
 import com.example.citronix.ferme.dto.request.FermeRequestDTO;
 import com.example.citronix.ferme.dto.response.FermeResponseDTO;
+import com.example.citronix.ferme.validation.FermeValidator;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,24 +22,19 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Service
 public class FermeServiceImpl implements FermeService {
 
     private final FermeRepository fermeRepository;
-    private final ChampRepository champRepository;
     private final FermeMapper fermeMapper;
     private final EntityManager entityManager;
+    private final FermeValidator fermeValidator;
 
-    public FermeServiceImpl(FermeRepository fermeRepository, ChampRepository champRepository, FermeMapper fermeMapper, EntityManager entityManager) {
-        this.fermeRepository = fermeRepository;
-        this.champRepository = champRepository;
-        this.fermeMapper = fermeMapper;
-        this.entityManager = entityManager;
-    }
-
-    @Transactional
     @Override
     public FermeResponseDTO save(FermeRequestDTO fermeRequestDTO) {
+        fermeValidator.validate(fermeRequestDTO);
+
         Ferme ferme = fermeMapper.toEntity(fermeRequestDTO);
         ferme = fermeRepository.save(ferme);
         return fermeMapper.toResponseDTO(ferme);
@@ -46,6 +43,8 @@ public class FermeServiceImpl implements FermeService {
     @Transactional
     @Override
     public FermeResponseDTO update(UUID id, FermeRequestDTO fermeRequestDTO) {
+        fermeValidator.validate(fermeRequestDTO);
+
         Ferme existingFerme = fermeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ferme avec l'ID " + id + " n'existe pas."));
 

@@ -6,4 +6,5 @@ import java.util.UUID;
 
 @Repository
 public interface ChampRepository extends JpaRepository<Champ, UUID> {
+    long countByFermeId(UUID fermeId);
 }
