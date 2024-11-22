@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ChampService {
-    ChampResponseDTO save(ChampRequestDTO fermeRequestDTO);
+    ChampResponseDTO save(ChampRequestDTO champRequestDTO);
 
     ChampResponseDTO update(UUID id, ChampRequestDTO champRequestDTO);
 

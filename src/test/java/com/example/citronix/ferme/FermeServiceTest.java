@@ -2,10 +2,10 @@
 //
 //import com.example.citronix.champ.Champ;
 //import com.example.citronix.champ.ChampRepository;
-//
 //import com.example.citronix.ferme.dto.request.FermeRequestDTO;
 //import com.example.citronix.ferme.dto.response.FermeResponseDTO;
 //import com.example.citronix.ferme.service.FermeServiceImpl;
+//import com.example.citronix.ferme.validation.FermeValidator;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.mockito.*;
@@ -14,7 +14,6 @@
 //
 //import static org.mockito.Mockito.*;
 //import static org.junit.jupiter.api.Assertions.*;
-//
 //
 //public class FermeServiceTest {
 //
@@ -26,6 +25,9 @@
 //
 //    @Mock
 //    private FermeMapper fermeMapper;
+//
+//    @Mock
+//    private FermeValidator fermeValidator;
 //
 //    @InjectMocks
 //    private FermeServiceImpl fermeService;
@@ -41,7 +43,7 @@
 //        UUID champId = UUID.randomUUID();
 //        List<UUID> champIds = List.of(champId);
 //
-//        fermeRequestDTO = new FermeRequestDTO("Ferme1", "Localisation1", 100.0, new Date(), champIds);
+//        fermeRequestDTO = new FermeRequestDTO("Ferme1", "Localisation1", 100.0, new Date());
 //        ferme = new Ferme();
 //        ferme.setId(UUID.randomUUID());
 //        ferme.setNom("Ferme1");
@@ -60,6 +62,9 @@
 //
 //        when(fermeMapper.toEntity(fermeRequestDTO)).thenReturn(ferme);
 //        when(fermeMapper.toResponseDTO(ferme)).thenReturn(fermeResponseDTO);
+//
+//        // Mocker le comportement de fermeValidator si nécessaire
+//        doNothing().when(fermeValidator).validate(fermeRequestDTO);
 //    }
 //
 //    @Test
@@ -72,7 +77,6 @@
 //        assertEquals("Ferme1", response.nom());
 //        verify(fermeRepository, times(1)).save(any(Ferme.class));
 //    }
-//
 //
 //    @Test
 //    void testFindById() {

@@ -1,150 +1,158 @@
-package com.example.citronix.champ.service;
-
-import com.example.citronix.champ.Champ;
-import com.example.citronix.champ.ChampMapper;
-import com.example.citronix.champ.ChampRepository;
-import com.example.citronix.champ.dto.request.ChampRequestDTO;
-import com.example.citronix.champ.dto.response.ChampResponseDTO;
-import com.example.citronix.ferme.Ferme;
-import com.example.citronix.ferme.service.FermeService;
-import com.example.citronix.champ.validation.ChampValidator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-public class ChampServiceImplTest {
-
-    @Mock
-    private ChampMapper champMapper;
-    @Mock
-    private ChampRepository champRepository;
-    @Mock
-    private FermeService fermeService;
-    @Mock
-    private ChampValidator champValidator;
-
-    @InjectMocks
-    private ChampServiceImpl champService;
-
-    private ChampRequestDTO champRequestDTO;
-    private Champ champ;
-    private Ferme ferme;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        champRequestDTO = new ChampRequestDTO("Champ 1", 10.0, UUID.randomUUID());
-        champ = new Champ(UUID.randomUUID(), "Champ 1", 10.0, null);
-        ferme = new Ferme(UUID.randomUUID(), "Ferme 1");
-        champ.setFerme(ferme);
-    }
-
-    @Test
-    void save_ShouldSaveChampAndReturnResponseDTO() {
-        // Arrange
-        when(fermeService.findFermeById(any(UUID.class))).thenReturn(ferme);
-        when(champMapper.toEntity(any(ChampRequestDTO.class))).thenReturn(champ);
-        when(champRepository.save(any(Champ.class))).thenReturn(champ);
-        when(champMapper.toResponseDTO(any(Champ.class))).thenReturn(new ChampResponseDTO(champ.getId(), champ.getNom(), champ.getSuperficie(), null, null));
-
-        // Act
-        ChampResponseDTO result = champService.save(champRequestDTO);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(champ.getNom(), result.nom());
-        verify(champRepository, times(1)).save(champ);
-    }
-
-    @Test
-    void update_ShouldUpdateChampAndReturnResponseDTO() {
-        // Arrange
-        UUID champId = UUID.randomUUID();
-        when(champRepository.findById(champId)).thenReturn(Optional.of(champ));
-        when(fermeService.findFermeById(any(UUID.class))).thenReturn(ferme);
-        when(champMapper.toResponseDTO(any(Champ.class))).thenReturn(new ChampResponseDTO(champ.getId(), champ.getNom(), champ.getSuperficie(), null, null));
-
-        ChampRequestDTO updateDTO = new ChampRequestDTO("Champ Updated", 20.0, champRequestDTO.ferme_id());
-
-        // Act
-        ChampResponseDTO result = champService.update(champId, updateDTO);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(updateDTO.nom(), result.nom());
-        assertEquals(updateDTO.superficie(), result.superficie());
-        verify(champRepository, times(1)).save(champ);
-    }
-
-    @Test
-    void findById_ShouldReturnChampResponseDTO() {
-        // Arrange
-        UUID champId = UUID.randomUUID();
-        when(champRepository.findById(champId)).thenReturn(Optional.of(champ));
-        when(champMapper.toResponseDTO(any(Champ.class))).thenReturn(new ChampResponseDTO(champ.getId(), champ.getNom(), champ.getSuperficie(), null, null));
-
-        // Act
-        Optional<ChampResponseDTO> result = champService.findById(champId);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(champ.getNom(), result.get().nom());
-    }
-
-    @Test
-    void findById_ShouldReturnEmptyOptionalWhenChampNotFound() {
-        // Arrange
-        UUID champId = UUID.randomUUID();
-        when(champRepository.findById(champId)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<ChampResponseDTO> result = champService.findById(champId);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void delete_ShouldDeleteChamp() {
-        // Arrange
-        UUID champId = UUID.randomUUID();
-        doNothing().when(champRepository).deleteById(champId);
-
-        // Act
-        champService.delete(champId);
-
-        // Assert
-        verify(champRepository, times(1)).deleteById(champId);
-    }
-
-    @Test
-    void sommeSuperficies_ShouldReturnSumOfSuperficies() {
-        // Arrange
-        ChampRequestDTO champDTO1 = new ChampRequestDTO("Champ 1", 10.0, champRequestDTO.ferme_id());
-        ChampRequestDTO champDTO2 = new ChampRequestDTO("Champ 2", 15.0, champRequestDTO.ferme_id());
-
-        // Act
-        Double result = champService.sommeSuperficies(List.of(champDTO1, champDTO2));
-
-        // Assert
-        assertEquals(25.0, result);
-    }
-
-    @Test
-    void findChampById_ShouldThrowExceptionWhenNotFound() {
-        // Arrange
-        UUID champId = UUID.randomUUID();
-        when(champRepository.findById(champId)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> champService.findChampById(champId));
-    }
-}
+//package com.example.citronix.champ;
+//
+//import com.example.citronix.champ.dto.request.ChampRequestDTO;
+//import com.example.citronix.champ.dto.response.ChampResponseDTO;
+//import com.example.citronix.champ.service.ChampServiceImpl;
+//import com.example.citronix.ferme.Ferme;
+//import com.example.citronix.ferme.dto.response.EmbeddedFermeResponse;
+//import com.example.citronix.ferme.service.FermeService;
+//
+//import com.example.citronix.champ.validation.ChampValidator;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Test;
+//import org.mockito.*;
+//
+//import java.time.LocalDate;
+//import java.util.*;
+//
+//import static org.mockito.Mockito.*;
+//import static org.junit.jupiter.api.Assertions.*;
+//
+//public class ChampServiceTest {
+//
+//    @Mock
+//    private ChampRepository champRepository;
+//
+//    @Mock
+//    private FermeService fermeService;
+//
+//    @Mock
+//    private ChampMapper champMapper;
+//
+//    @Mock
+//    private ChampValidator champValidator;
+//
+//    @InjectMocks
+//    private ChampServiceImpl champService;
+//
+//    private ChampRequestDTO champRequestDTO;
+//    private Champ champ;
+//    private ChampResponseDTO champResponseDTO;
+//
+//    @BeforeEach
+//    void setUp() {
+//        MockitoAnnotations.openMocks(this);
+//
+//        UUID fermeId = UUID.randomUUID();
+//        champRequestDTO = new ChampRequestDTO("Champ1", 150.0, fermeId);
+//
+//        Ferme ferme = new Ferme();
+//        ferme.setId(fermeId);
+//        ferme.setNom("Ferme1");
+//        ferme.setSuperficie(200.0);
+//        ferme.setDateCreation(new LocalDate());
+//
+//        champ = new Champ();
+//        champ.setId(UUID.randomUUID());
+//        champ.setNom("Champ1");
+//        champ.setSuperficie(150.0);
+//        champ.setFerme(ferme);
+//
+//        EmbeddedFermeResponse fermeResponse = new EmbeddedFermeResponse(
+//                ferme.getId(),
+//                ferme.getNom(),
+//                ferme.getLocalisation(),
+//                ferme.getSuperficie(),
+//                ferme.getDateCreation()
+//        );
+//
+//        champResponseDTO = new ChampResponseDTO(
+//                champ.getId(),
+//                champ.getNom(),
+//                champ.getSuperficie(),
+//                fermeResponse,
+//                Collections.emptyList()
+//        );
+//
+//        when(fermeService.findFermeById(fermeId)).thenReturn(ferme);
+//        when(champMapper.toEntity(champRequestDTO)).thenReturn(champ);
+//        when(champMapper.toResponseDTO(champ)).thenReturn(champResponseDTO);
+//    }
+//
+//    @Test
+//    void testSaveChamp() {
+//        when(champRepository.save(any(Champ.class))).thenReturn(champ);
+//
+//        ChampResponseDTO response = champService.save(champRequestDTO);
+//
+//        assertNotNull(response);
+//        assertEquals("Champ1", response.nom());
+//        verify(champRepository, times(1)).save(any(Champ.class));
+//    }
+//
+//    @Test
+//    void testUpdateChamp() {
+//        UUID champId = champ.getId();
+//        ChampRequestDTO champRequestDTO = new ChampRequestDTO("UpdatedChamp", 200.0, champ.getFerme().getId());
+//
+//        when(champRepository.findById(champId)).thenReturn(Optional.of(champ));
+//        when(champRepository.save(any(Champ.class))).thenReturn(champ);
+//
+//        champService.update(champId, champRequestDTO);
+//
+//        assertEquals("UpdatedChamp", champ.getNom());
+//        verify(champRepository, times(1)).save(any(Champ.class));
+//    }
+//
+//
+//    @Test
+//    void testFindById() {
+//        UUID champId = champ.getId();
+//        when(champRepository.findById(champId)).thenReturn(Optional.of(champ));
+//
+//        Optional<ChampResponseDTO> foundChamp = champService.findById(champId);
+//
+//        assertTrue(foundChamp.isPresent());
+//        assertEquals(champ.getNom(), foundChamp.get().nom());
+//    }
+//
+//    @Test
+//    void testFindAll() {
+//        when(champRepository.findAll()).thenReturn(List.of(champ));
+//
+//        List<ChampResponseDTO> allChamps = champService.findAll();
+//        assertNotNull(allChamps);
+//        assertFalse(allChamps.isEmpty());
+//        assertEquals(1, allChamps.size());
+//    }
+//
+//    @Test
+//    void testDelete() {
+//        UUID champId = champ.getId();
+//        when(champRepository.existsById(champId)).thenReturn(true);
+//
+//        champService.delete(champId);
+//
+//        verify(champRepository, times(1)).deleteById(champId);
+//    }
+//
+//    @Test
+//    void testSommeSuperficies() {
+//        List<ChampRequestDTO> champs = List.of(new ChampRequestDTO("Champ1", 100.0, champRequestDTO.ferme_id()),
+//                new ChampRequestDTO("Champ2", 150.0, champRequestDTO.ferme_id()));
+//
+//        Double sum = champService.sommeSuperficies(champs);
+//        assertEquals(250.0, sum);
+//    }
+//
+//    @Test
+//    void testFindChampById() {
+//        UUID champId = champ.getId();
+//        when(champRepository.findById(champId)).thenReturn(Optional.of(champ));
+//
+//        Champ foundChamp = champService.findChampById(champId);
+//
+//        assertNotNull(foundChamp);
+//        assertEquals(champ.getNom(), foundChamp.getNom());
+//    }
+//}

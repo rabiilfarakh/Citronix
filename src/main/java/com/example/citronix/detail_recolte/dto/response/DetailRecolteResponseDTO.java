@@ -1,4 +1,10 @@
-package com.example.citronix.detail_recolte.dto;
+package com.example.citronix.detail_recolte.dto.response;
 
-public class DetailRecolteResponseDTO {
-}
+import java.util.UUID;
+
+public record DetailRecolteResponseDTO (
+    UUID id,
+    UUID arbre_id,
+    UUID recolte_id,
+    Double quantite
+){}

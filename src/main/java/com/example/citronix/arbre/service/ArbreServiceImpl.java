@@ -10,6 +10,8 @@ import com.example.citronix.champ.service.ChampService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -64,5 +66,34 @@ public class ArbreServiceImpl implements ArbreService {
         }
         arbreRepository.deleteById(id);
     }
+
+    @Override
+    public int age(UUID id) {
+        Arbre arbre = arbreRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Arbre with id: " + id + " not found"));
+
+        LocalDate dateActuelle = LocalDate.now();
+        LocalDate datePlantation = arbre.getDatePlantation();
+
+        if (datePlantation == null) {
+            throw new RuntimeException("Date de plantation manquante pour l'arbre avec id: " + id);
+        }
+
+        return Period.between(datePlantation, dateActuelle).getYears();
+    }
+
+    @Override
+    public Double productivite(UUID id) {
+        int age = age(id);
+
+        if (age < 3) {
+            return 2.5;
+        } else if (age >= 3 && age < 10) {
+            return 12.0;
+        } else {
+            return 20.0;
+        }
+    }
+
 
 }
