@@ -33,7 +33,7 @@ public class Recolte {
     @OneToMany(mappedBy = "recolte")
     private Set<DetailRecolte> arbres;
 
-//    @ManyToOne
-//    @JoinColumn(name = "champ_id", nullable = false)
-//    private Champ champ;
+    @ManyToOne
+    @JoinColumn(name = "champ_id", nullable = false)
+    private Champ champ;
 }

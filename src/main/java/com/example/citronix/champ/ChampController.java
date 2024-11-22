@@ -1,6 +1,7 @@
 package com.example.citronix.champ;
 
 import com.example.citronix.champ.dto.request.ChampRequestDTO;
+import com.example.citronix.champ.dto.response.ChampDTO;
 import com.example.citronix.champ.dto.response.ChampResponseDTO;
 import com.example.citronix.champ.service.ChampService;
 import jakarta.validation.Valid;
@@ -24,28 +25,28 @@ public class ChampController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ChampResponseDTO>> getAllChamps() {
-        List<ChampResponseDTO> champs = champService.findAll();
+    public ResponseEntity<List<ChampDTO>> getAllChamps() {
+        List<ChampDTO> champs = champService.findAll();
         return new ResponseEntity<>(champs, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ChampResponseDTO> getChampById(@PathVariable UUID id) {
+    public ResponseEntity<ChampDTO> getChampById(@PathVariable UUID id) {
         return champService.findById(id)
                 .map(champ -> new ResponseEntity<>(champ, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    public ResponseEntity<ChampResponseDTO> createChamp(@Valid @RequestBody ChampRequestDTO champRequestDTO) {
-        ChampResponseDTO champResponseDTO = champService.save(champRequestDTO);
+    public ResponseEntity<ChampDTO> createChamp(@Valid @RequestBody ChampRequestDTO champRequestDTO) {
+        ChampDTO champResponseDTO = champService.save(champRequestDTO);
         return new ResponseEntity<>(champResponseDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ChampResponseDTO> updateChamp(@PathVariable UUID id, @Valid @RequestBody ChampRequestDTO champRequestDTO) {
+    public ResponseEntity<ChampDTO> updateChamp(@PathVariable UUID id, @Valid @RequestBody ChampRequestDTO champRequestDTO) {
         try {
-            ChampResponseDTO champResponseDTO = champService.update(id, champRequestDTO);
+            ChampDTO champResponseDTO = champService.update(id, champRequestDTO);
             return new ResponseEntity<>(champResponseDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -62,10 +63,4 @@ public class ChampController {
         }
     }
 
-    @GetMapping("/sommeSuperficies")
-    public ResponseEntity<Double> getSommeSuperficies(@Valid @RequestBody List<ChampRequestDTO> champRequestDTO) {
-        List<ChampResponseDTO> champs = champService.findAll();
-        Double sommeSuperficies = champService.sommeSuperficies(champRequestDTO);
-        return new ResponseEntity<>(sommeSuperficies, HttpStatus.OK);
-    }
 }
