@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,55 +32,23 @@ public class RecolteServiceImpl implements RecolteService {
     private final RecolteMapper recolteMapper;
     private final DetailRecolteService detailRecolteService;
 
+    private static final int MOIS_LIMIT = 4;
+
     @Override
     public RecolteDTO save(RecolteRequestDTO recolteRequestDTO) {
-
         Champ champ = champService.findChampById(recolteRequestDTO.champ_id());
 
-        if (champ.getArbres() == null || champ.getArbres().isEmpty()) {
-            throw new RuntimeException("Le champ avec ID: " + champ.getId() + " ne contient aucun arbre.");
-        }
-
-        Double quantite = champ.getArbres()
-                .stream()
-                .mapToDouble(arbre -> Optional.ofNullable(arbreService.productivite(arbre.getId()))
-                        .orElseThrow(() -> new RuntimeException("Impossible de calculer la productivité pour l'arbre avec ID: " + arbre.getId())))
-                .sum();
+        Double quantite = calculateTotalQuantite(champ);
 
         Recolte recolte = recolteMapper.toEntity(recolteRequestDTO);
         recolte.setQuantite(quantite);
-
-
-        int mois = LocalDate.now().getMonthValue();
-        Saison saisonActuelle;
-
-        if (mois >= 3 && mois <= 5) {
-            saisonActuelle = Saison.PRINTEMPS;
-        } else if (mois >= 6 && mois <= 8) {
-            saisonActuelle = Saison.ETE;
-        } else if (mois >= 9 && mois <= 11) {
-            saisonActuelle = Saison.AUTOMNE;
-        } else {
-            saisonActuelle = Saison.HIVER;
-        }
-
-        recolte.setSaison(saisonActuelle);
+        recolte.setSaison(determineCurrentSeason());
 
         Recolte savedRecolte = recolteRepository.save(recolte);
-
-        champ.getArbres().forEach(arbre -> {
-            DetailRecolteRequestDTO detailRecolteRequestDTO = new DetailRecolteRequestDTO(
-                    arbre.getId(),
-                    savedRecolte.getId(),
-                    arbreService.productivite(arbre.getId())
-            );
-            detailRecolteService.save(detailRecolteRequestDTO);
-        });
+        saveArbreDetails(champ, savedRecolte);
 
         return recolteMapper.toDTO(savedRecolte);
     }
-
-
 
     @Override
     public RecolteDTO update(UUID id, RecolteRequestDTO recolteRequestDTO) {
@@ -89,11 +58,7 @@ public class RecolteServiceImpl implements RecolteService {
         existingRecolte.setDateRecolte(recolteRequestDTO.dateRecolte());
         Champ champ = champService.findChampById(recolteRequestDTO.champ_id());
 
-        Double quantite = champ.getArbres()
-                .stream()
-                .mapToDouble(arbre -> arbreService.productivite(arbre.getId()))
-                .sum();
-        existingRecolte.setQuantite(quantite);
+        existingRecolte.setQuantite(calculateTotalQuantite(champ));
 
         Recolte updatedRecolte = recolteRepository.save(existingRecolte);
         return recolteMapper.toDTO(updatedRecolte);
@@ -110,7 +75,7 @@ public class RecolteServiceImpl implements RecolteService {
         return recolteRepository.findAll()
                 .stream()
                 .map(recolteMapper::toDTO)
-                .collect(Collectors.toList()).reversed();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -118,5 +83,38 @@ public class RecolteServiceImpl implements RecolteService {
         Recolte recolte = recolteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Récolte introuvable avec l'ID : " + id));
         recolteRepository.delete(recolte);
+    }
+
+
+    private Double calculateTotalQuantite(Champ champ) {
+        return champ.getArbres()
+                .stream()
+                .mapToDouble(arbre -> Optional.ofNullable(arbreService.productivite(arbre.getId()))
+                        .orElseThrow(() -> new RuntimeException("Impossible de calculer la productivité pour l'arbre avec ID: " + arbre.getId())))
+                .sum();
+    }
+
+    private Saison determineCurrentSeason() {
+        int mois = LocalDate.now().getMonthValue();
+        if (mois >= 3 && mois <= 5) {
+            return Saison.PRINTEMPS;
+        } else if (mois >= 6 && mois <= 8) {
+            return Saison.ETE;
+        } else if (mois >= 9 && mois <= 11) {
+            return Saison.AUTOMNE;
+        } else {
+            return Saison.HIVER;
+        }
+    }
+
+    private void saveArbreDetails(Champ champ, Recolte savedRecolte) {
+        champ.getArbres().forEach(arbre -> {
+            DetailRecolteRequestDTO detailRecolteRequestDTO = new DetailRecolteRequestDTO(
+                    arbre.getId(),
+                    savedRecolte.getId(),
+                    arbreService.productivite(arbre.getId())
+            );
+            detailRecolteService.save(detailRecolteRequestDTO);
+        });
     }
 }

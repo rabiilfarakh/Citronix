@@ -1,6 +1,7 @@
 package com.example.citronix.recolte;
 
 import com.example.citronix.arbre.Arbre;
+import com.example.citronix.champ.Champ;
 import com.example.citronix.detail_recolte.DetailRecolte;
 import com.example.citronix.enumeration.Saison;
 import jakarta.persistence.*;
@@ -31,4 +32,8 @@ public class Recolte {
 
     @OneToMany(mappedBy = "recolte")
     private Set<DetailRecolte> arbres;
+
+//    @ManyToOne
+//    @JoinColumn(name = "champ_id", nullable = false)
+//    private Champ champ;
 }
