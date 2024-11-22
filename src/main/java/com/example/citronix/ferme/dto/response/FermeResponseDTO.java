@@ -1,5 +1,6 @@
 package com.example.citronix.ferme.dto.response;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public record FermeResponseDTO(
         String nom,
         String localisation,
         Double superficie,
-        Date dateCreation,
+        LocalDate dateCreation,
         List<ChampDTO> champs
 ) {}
 

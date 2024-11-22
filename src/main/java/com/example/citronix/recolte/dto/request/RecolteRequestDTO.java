@@ -1,4 +1,12 @@
-package com.example.citronix.recolte.dto;
+package com.example.citronix.recolte.dto.request;
 
-public class RecolteRequestDTO {
-}
+import com.example.citronix.enumeration.Saison;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+public record RecolteRequestDTO (
+        LocalDate dateRecolte,
+        UUID champ_id,
+        Double quantite
+){}

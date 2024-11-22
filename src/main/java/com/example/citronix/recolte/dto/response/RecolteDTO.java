@@ -7,9 +7,9 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
-public record RecolteResponseDTO (
+public record RecolteDTO (
         UUID id,
         LocalDate dateRecolte,
         Saison saison,
-        Set<Arbre> arbres
+        Double quantite
 ){}

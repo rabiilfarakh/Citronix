@@ -6,7 +6,6 @@ import com.example.citronix.champ.ChampRepository;
 import com.example.citronix.champ.dto.request.ChampRequestDTO;
 import com.example.citronix.champ.dto.response.ChampResponseDTO;
 import com.example.citronix.champ.validation.ChampValidator;
-import com.example.citronix.champ.validation.ChampValidatorImpl;
 import com.example.citronix.ferme.Ferme;
 import com.example.citronix.ferme.service.FermeService;
 import lombok.AllArgsConstructor;

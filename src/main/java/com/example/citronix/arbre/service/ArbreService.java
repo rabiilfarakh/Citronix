@@ -18,4 +18,8 @@ public interface ArbreService {
     List<ArbreResponseDTO> findAll();
 
     void delete(UUID id);
+
+    int age(UUID id);
+
+    Double productivite(UUID id);
 }
