@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,12 +27,10 @@ public class Recolte {
     @NotNull(message = "La saison ne peut pas être null")
     private Saison saison;
 
-    @Positive
-    @NotNull(message = "La quantité ne peut pas être null")
     private Double quantite;
 
-    @OneToMany(mappedBy = "recolte")
-    private Set<DetailRecolte> arbres;
+    @OneToMany(mappedBy = "recolte", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<DetailRecolte> detailsRecolte;
 
     @ManyToOne
     @JoinColumn(name = "champ_id", nullable = false)

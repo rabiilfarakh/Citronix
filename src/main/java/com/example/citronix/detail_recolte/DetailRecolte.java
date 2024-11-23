@@ -19,7 +19,7 @@ public class DetailRecolte {
     @JoinColumn(name = "arbre_id", nullable = false)
     private Arbre arbre;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "recolte_id", nullable = false)
     private Recolte recolte;
 

@@ -11,7 +11,6 @@ import com.example.citronix.recolte.RecolteMapper;
 import com.example.citronix.recolte.RecolteRepository;
 import com.example.citronix.recolte.dto.request.RecolteRequestDTO;
 import com.example.citronix.recolte.dto.response.RecolteDTO;
-import com.example.citronix.recolte.dto.response.RecolteResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,19 +31,24 @@ public class RecolteServiceImpl implements RecolteService {
     private final RecolteMapper recolteMapper;
     private final DetailRecolteService detailRecolteService;
 
-    private static final int MOIS_LIMIT = 4;
+    private static final int MOIS_LIMIT = 3;
 
     @Override
     public RecolteDTO save(RecolteRequestDTO recolteRequestDTO) {
         Champ champ = champService.findChampById(recolteRequestDTO.champ_id());
+        if (!canHarvest(recolteRequestDTO.champ_id(), recolteRequestDTO.dateRecolte())) {
+            throw new IllegalArgumentException("Une récolte ne peut être effectuée que 4 mois après la précédente.");
+        }
 
         Double quantite = calculateTotalQuantite(champ);
 
         Recolte recolte = recolteMapper.toEntity(recolteRequestDTO);
+        recolte.setChamp(champ);
         recolte.setQuantite(quantite);
         recolte.setSaison(determineCurrentSeason());
 
         Recolte savedRecolte = recolteRepository.save(recolte);
+
         saveArbreDetails(champ, savedRecolte);
 
         return recolteMapper.toDTO(savedRecolte);
@@ -53,10 +57,14 @@ public class RecolteServiceImpl implements RecolteService {
     @Override
     public RecolteDTO update(UUID id, RecolteRequestDTO recolteRequestDTO) {
         Recolte existingRecolte = recolteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Récolte introuvable avec l'ID : " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Récolte introuvable avec l'ID : " + id));
 
         existingRecolte.setDateRecolte(recolteRequestDTO.dateRecolte());
         Champ champ = champService.findChampById(recolteRequestDTO.champ_id());
+
+        if (champ == null) {
+            throw new IllegalArgumentException("Champ non trouvé pour l'ID : " + recolteRequestDTO.champ_id());
+        }
 
         existingRecolte.setQuantite(calculateTotalQuantite(champ));
 
@@ -65,9 +73,9 @@ public class RecolteServiceImpl implements RecolteService {
     }
 
     @Override
-    public Optional<RecolteResponseDTO> findById(UUID id) {
+    public Optional<RecolteDTO> findById(UUID id) {
         return recolteRepository.findById(id)
-                .map(recolteMapper::toResponseDTO);
+                .map(recolteMapper::toDTO);
     }
 
     @Override
@@ -81,9 +89,20 @@ public class RecolteServiceImpl implements RecolteService {
     @Override
     public void delete(UUID id) {
         Recolte recolte = recolteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Récolte introuvable avec l'ID : " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Récolte introuvable avec l'ID : " + id));
         recolteRepository.delete(recolte);
     }
+
+    private boolean canHarvest(UUID champId , LocalDate recolteDate) {
+        Optional<Recolte> latestRecolte = recolteRepository.findTopByChampIdOrderByDateRecolteDesc(champId);
+        if (latestRecolte.isPresent()) {
+            LocalDate lastRecolteDate = latestRecolte.get().getDateRecolte();
+            long monthsSinceLastRecolte = ChronoUnit.MONTHS.between(lastRecolteDate, recolteDate);
+            return monthsSinceLastRecolte >= MOIS_LIMIT;
+        }
+        return true;
+    }
+
 
 
     private Double calculateTotalQuantite(Champ champ) {

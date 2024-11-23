@@ -2,7 +2,6 @@ package com.example.citronix.recolte.service;
 
 import com.example.citronix.recolte.dto.request.RecolteRequestDTO;
 import com.example.citronix.recolte.dto.response.RecolteDTO;
-import com.example.citronix.recolte.dto.response.RecolteResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +12,7 @@ public interface RecolteService {
 
     RecolteDTO update(UUID id, RecolteRequestDTO recolteRequestDTO);
 
-    Optional<RecolteResponseDTO> findById(UUID id);
+    Optional<RecolteDTO> findById(UUID id);
 
     List<RecolteDTO> findAll();
 

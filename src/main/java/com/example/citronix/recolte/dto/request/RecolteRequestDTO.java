@@ -7,6 +7,5 @@ import java.util.UUID;
 
 public record RecolteRequestDTO (
         LocalDate dateRecolte,
-        UUID champ_id,
-        Double quantite
+        UUID champ_id
 ){}

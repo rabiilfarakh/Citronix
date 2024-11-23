@@ -10,6 +10,8 @@ import org.mapstruct.Mapping;
 public interface RecolteMapper {
 
     Recolte toEntity(RecolteRequestDTO recolteRequestDTO);
+
     RecolteDTO toDTO(Recolte recolte);
-    RecolteResponseDTO toResponseDTO(Recolte recolte);
 }
+
+
