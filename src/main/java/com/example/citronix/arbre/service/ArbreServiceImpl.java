@@ -4,6 +4,7 @@ import com.example.citronix.arbre.Arbre;
 import com.example.citronix.arbre.ArbreMapper;
 import com.example.citronix.arbre.ArbreRepository;
 import com.example.citronix.arbre.dto.request.ArbreRequestDTO;
+import com.example.citronix.arbre.dto.response.ArbreDTO;
 import com.example.citronix.arbre.dto.response.ArbreResponseDTO;
 import com.example.citronix.champ.Champ;
 import com.example.citronix.champ.service.ChampService;
@@ -25,16 +26,29 @@ public class ArbreServiceImpl implements ArbreService {
     private final ChampService champService;
 
     @Override
-    public ArbreResponseDTO save(ArbreRequestDTO arbreRequestDTO) {
-        Arbre arbre = arbreMapper.toEntity(arbreRequestDTO);
+    public ArbreDTO save(ArbreRequestDTO arbreRequestDTO) {
         Champ champ = champService.findChampById(arbreRequestDTO.champ_id());
+
+        double surface = champ.getSuperficie();
+        int maxArbres = (int) (surface / 100);
+        System.out.println("maxArbres: "+maxArbres);
+        long nombreArbresExistants = arbreRepository.countByChampId(champ.getId());
+        System.out.println("nombreArbresExistants: "+nombreArbresExistants);
+        if (nombreArbresExistants >= maxArbres) {
+            throw new IllegalArgumentException("Le champ avec l'ID " + champ.getId() +
+                    " ne peut pas contenir plus de " + maxArbres + " arbres pour une surface de " + surface + " m³.");
+        }
+
+        Arbre arbre = arbreMapper.toEntity(arbreRequestDTO);
         arbre.setChamp(champ);
         arbre = arbreRepository.save(arbre);
+
         return arbreMapper.toResponseDTO(arbre);
     }
 
+
     @Override
-    public ArbreResponseDTO update(UUID id, ArbreRequestDTO arbreRequestDTO) {
+    public ArbreDTO update(UUID id, ArbreRequestDTO arbreRequestDTO) {
         Arbre existingArbre = arbreRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Arbre avec l'ID " + id + " introuvable"));
 
@@ -47,13 +61,13 @@ public class ArbreServiceImpl implements ArbreService {
     }
 
     @Override
-    public Optional<ArbreResponseDTO> findById(UUID id) {
+    public Optional<ArbreDTO> findById(UUID id) {
         return arbreRepository.findById(id)
                 .map(arbreMapper::toResponseDTO);
     }
 
     @Override
-    public List<ArbreResponseDTO> findAll() {
+    public List<ArbreDTO> findAll() {
         return arbreRepository.findAll().stream()
                 .map(arbreMapper::toResponseDTO)
                 .toList();

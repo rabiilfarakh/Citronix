@@ -1,7 +1,7 @@
 package com.example.citronix.arbre;
 
 import com.example.citronix.arbre.dto.request.ArbreRequestDTO;
-import com.example.citronix.arbre.dto.response.ArbreResponseDTO;
+import com.example.citronix.arbre.dto.response.ArbreDTO;
 import com.example.citronix.arbre.service.ArbreService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,28 +25,28 @@ public class ArbreController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ArbreResponseDTO>> getAllArbres() {
-        List<ArbreResponseDTO> arbres = arbreService.findAll();
+    public ResponseEntity<List<ArbreDTO>> getAllArbres() {
+        List<ArbreDTO> arbres = arbreService.findAll();
         return new ResponseEntity<>(arbres, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ArbreResponseDTO> getArbreById(@PathVariable UUID id) {
+    public ResponseEntity<ArbreDTO> getArbreById(@PathVariable UUID id) {
         return arbreService.findById(id)
                 .map(arbre -> new ResponseEntity<>(arbre, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    public ResponseEntity<ArbreResponseDTO> createArbre(@Valid @RequestBody ArbreRequestDTO arbreRequestDTO) {
-        ArbreResponseDTO arbreResponseDTO = arbreService.save(arbreRequestDTO);
+    public ResponseEntity<ArbreDTO> createArbre(@Valid @RequestBody ArbreRequestDTO arbreRequestDTO) {
+        ArbreDTO arbreResponseDTO = arbreService.save(arbreRequestDTO);
         return new ResponseEntity<>(arbreResponseDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ArbreResponseDTO> updateArbre(@PathVariable UUID id, @Valid @RequestBody ArbreRequestDTO arbreRequestDTO) {
+    public ResponseEntity<ArbreDTO> updateArbre(@PathVariable UUID id, @Valid @RequestBody ArbreRequestDTO arbreRequestDTO) {
         try {
-            ArbreResponseDTO arbreResponseDTO = arbreService.update(id, arbreRequestDTO);
+            ArbreDTO arbreResponseDTO = arbreService.update(id, arbreRequestDTO);
             return new ResponseEntity<>(arbreResponseDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

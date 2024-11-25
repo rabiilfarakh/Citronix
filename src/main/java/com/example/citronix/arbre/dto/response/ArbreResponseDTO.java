@@ -3,7 +3,6 @@ package com.example.citronix.arbre.dto.response;
 import com.example.citronix.champ.dto.response.EmbeddedChampResponse;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.UUID;
 
 public record ArbreResponseDTO(

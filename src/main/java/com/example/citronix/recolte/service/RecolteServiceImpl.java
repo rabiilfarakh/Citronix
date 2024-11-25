@@ -45,6 +45,7 @@ public class RecolteServiceImpl implements RecolteService {
         Recolte recolte = recolteMapper.toEntity(recolteRequestDTO);
         recolte.setChamp(champ);
         recolte.setQuantite(quantite);
+
         recolte.setSaison(determineCurrentSeason());
 
         Recolte savedRecolte = recolteRepository.save(recolte);
