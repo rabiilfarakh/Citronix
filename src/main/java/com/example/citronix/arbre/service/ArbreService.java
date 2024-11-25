@@ -2,6 +2,7 @@ package com.example.citronix.arbre.service;
 
 
 import com.example.citronix.arbre.dto.request.ArbreRequestDTO;
+import com.example.citronix.arbre.dto.response.ArbreDTO;
 import com.example.citronix.arbre.dto.response.ArbreResponseDTO;
 import java.util.List;
 import java.util.Optional;
@@ -9,13 +10,13 @@ import java.util.UUID;
 
 public interface ArbreService {
 
-    ArbreResponseDTO save(ArbreRequestDTO arbreRequestDTO);
+    ArbreDTO save(ArbreRequestDTO arbreRequestDTO);
 
-    ArbreResponseDTO update(UUID id, ArbreRequestDTO arbreRequestDTO);
+    ArbreDTO update(UUID id, ArbreRequestDTO arbreRequestDTO);
 
-    Optional<ArbreResponseDTO> findById(UUID id);
+    Optional<ArbreDTO> findById(UUID id);
 
-    List<ArbreResponseDTO> findAll();
+    List<ArbreDTO> findAll();
 
     void delete(UUID id);
 

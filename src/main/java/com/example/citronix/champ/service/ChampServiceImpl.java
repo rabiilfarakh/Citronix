@@ -32,6 +32,11 @@ public class ChampServiceImpl implements ChampService {
 
     @Override
     public ChampDTO save(ChampRequestDTO champRequestDTO) {
+
+        if (champRequestDTO.superficie() < 1000) {
+            throw new IllegalArgumentException("La superficie d'un champ doit être au minimum de 1000 m².");
+        }
+
         Champ champ = champMapper.toEntity(champRequestDTO);
         Ferme ferme = fermeService.findFermeById(champRequestDTO.ferme_id());
 
